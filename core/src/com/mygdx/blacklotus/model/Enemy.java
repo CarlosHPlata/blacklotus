@@ -14,7 +14,7 @@ import java.util.Random;
  */
 public class Enemy {
 
-    public static float MOV_SPEED = 50;
+    public static float MOV_SPEED = 200;
     private float initX, initY, verticex, verticey;
 
     private Texture texture;
@@ -36,6 +36,14 @@ public class Enemy {
     }
 
     public void update(float delta){
+
+        if (isOverY()){
+            this.verticex = bordes.x;
+            this.verticey = 0;
+            this.initX = 80;
+            this.initY = Gdx.graphics.getHeight()/2;
+        }
+
         float a = (this.initY - this.verticey) / ((this.initX - this.verticex) * (this.initX - this.verticex)); //calculo del foco de la parabola
 
         float nextX = bordes.x - MOV_SPEED*delta;
@@ -69,5 +77,12 @@ public class Enemy {
         else
             return false;
 
+    }
+
+    public boolean isOverY(){
+        if ( bordes.y <= 0 )
+            return true;
+        else
+            return false;
     }
 }
