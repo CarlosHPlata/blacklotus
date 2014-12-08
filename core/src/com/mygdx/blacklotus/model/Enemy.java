@@ -46,7 +46,7 @@ public class Enemy {
 
         float a = (this.initY - this.verticey) / ((this.initX - this.verticex) * (this.initX - this.verticex)); //calculo del foco de la parabola
 
-        float nextX = this.verticey==0? bordes.x - (MOV_SPEED*2)*delta : bordes.x - MOV_SPEED*delta;
+        float nextX = bordes.x - MOV_SPEED*delta;
         float nextY = a * ((nextX - this.verticex) * (nextX - this.verticex)) + this.verticey; //formula calculo de la parabola
 
         this.bordes.x = nextX;
