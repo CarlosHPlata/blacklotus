@@ -25,7 +25,7 @@ public class Ninja{
         this.x = x;
         this.y = y;
 
-        this.texture = new Texture(Gdx.files.internal("padle.jpg"));
+        this.texture = new Texture(Gdx.files.internal("ninja2.jpg"));
         this.bordes = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
     }
 

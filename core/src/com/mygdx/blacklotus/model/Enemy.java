@@ -24,7 +24,7 @@ public class Enemy {
         this.initX = initX;
         this.initY = initY;
 
-        this.texture = new Texture(Gdx.files.internal("padle.jpg"));
+        this.texture = new Texture(Gdx.files.internal("ninja1.jpg"));
         this.bordes = new Rectangle(initX, initY, texture.getWidth(), texture.getHeight());
 
         verticex = Gdx.graphics.getWidth()/2 + ((new Random()).nextFloat() * (Gdx.graphics.getWidth()/3));
