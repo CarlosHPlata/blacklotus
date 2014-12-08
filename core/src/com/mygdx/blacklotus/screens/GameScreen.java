@@ -28,6 +28,7 @@ public class GameScreen extends AbstractScreen {
     private Ninja blackLotus;
     private ArrayList<Shuriken> shurikens;
     private List<Enemy> enemies;
+    private int score;
 
     Texture textureBlackLotus;
 
@@ -35,7 +36,8 @@ public class GameScreen extends AbstractScreen {
         super (main);
         shurikens = new ArrayList<Shuriken>();
         enemies = new ArrayList<Enemy>();
-        cooldown_enemies = 0    ;
+        cooldown_enemies = 0;
+        score = 0;
     }
 
     @Override
@@ -80,12 +82,16 @@ public class GameScreen extends AbstractScreen {
 
         for (int i = 0; i < enemies.size(); i++){
             Enemy enemy = enemies.get(i);
-            if (enemy.isOver() || enemy.hitByShuriken(shurikens))
+            if( enemy.hitByShuriken(shurikens)){
+                score++;
+
+                continue;
+            }
+            if (enemy.isOver())
                 enemies.remove(enemy);
             else
                 enemy.update(delta);
         }
-
 
 
         batch.begin();
