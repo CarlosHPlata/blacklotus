@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -43,10 +45,29 @@ public class Enemy {
         this.bordes.y = nextY;
     }
 
+   private boolean hitByShuriken(Shuriken shuriken){
+       if(shuriken.getBordes().overlaps(this.bordes)){
+           return true;
+       }
+    return false;
+   }
+
+    public boolean hitByShuriken(ArrayList<Shuriken> shurikens){
+        for (int i = 0; i < shurikens.size(); i++){
+            if(this.hitByShuriken(shurikens.get(i))) {
+                shurikens.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isOver(){
+
         if ( bordes.x < 0 || bordes.x > Gdx.graphics.getWidth())
             return true;
         else
             return false;
+
     }
 }

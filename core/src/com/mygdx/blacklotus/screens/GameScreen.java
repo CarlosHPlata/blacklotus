@@ -26,7 +26,7 @@ public class GameScreen extends AbstractScreen {
 
     //elementos del juego
     private Ninja blackLotus;
-    private List<Shuriken> shurikens;
+    private ArrayList<Shuriken> shurikens;
     private List<Enemy> enemies;
 
     Texture textureBlackLotus;
@@ -80,11 +80,13 @@ public class GameScreen extends AbstractScreen {
 
         for (int i = 0; i < enemies.size(); i++){
             Enemy enemy = enemies.get(i);
-            if (enemy.isOver())
+            if (enemy.isOver() || enemy.hitByShuriken(shurikens))
                 enemies.remove(enemy);
             else
                 enemy.update(delta);
         }
+
+
 
         batch.begin();
             batch.draw(fondo, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
