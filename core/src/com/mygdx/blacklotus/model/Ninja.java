@@ -3,9 +3,12 @@ package com.mygdx.blacklotus.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Usuario on 06/12/2014.
@@ -18,25 +21,35 @@ public class Ninja{
 
     private float coldDown = 0;
 
-    private Texture texture;
+    private TextureRegion texture;
+    private TextureRegion ninjaNormal, throw1, throw2, throw3;
     private Rectangle bordes;
 
     public Ninja (float x, float y) {
         this.x = x;
         this.y = y;
 
-        this.texture = new Texture(Gdx.files.internal("padle.jpg"));
-        this.bordes = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
+        TextureAtlas atlas = new TextureAtlas("ninja.atlas");
+
+        this.ninjaNormal = atlas.findRegion("ninja");
+        this.throw1 = atlas.findRegion("ninja-throw-1");
+        this.throw2 = atlas.findRegion("ninja-throw-2");
+        this.throw3 = atlas.findRegion("ninja-throw-3");
+
+        this.texture = ninjaNormal;
+        this.bordes = new Rectangle(x, y, texture.getRegionWidth(), texture.getRegionHeight());
     }
 
     public void draw(SpriteBatch batch){
-        batch.draw(texture, bordes.x, bordes.y, texture.getWidth(), texture.getHeight());
+        batch.draw(texture, bordes.x, bordes.y, texture.getRegionWidth(), texture.getRegionHeight());
     }
 
     public void update(float delta, List<Shuriken> shurikens){
 
         if ( coldDown > 0) {
             coldDown = coldDown - delta;
+        } else {
+            this.texture = ninjaNormal;
         }
 
         if (Gdx.input.isTouched() && coldDown <= 0){
@@ -47,6 +60,19 @@ public class Ninja{
             shurikens.add(shuriken);
 
             coldDown = COLD_DOWN;
+            switch ((new Random()).nextInt(3)){
+                case 0:
+                    this.texture = this.throw1;
+                    break;
+                case 1:
+                    this.texture = this.throw2;
+                    break;
+                case 2:
+                    this.texture = this.throw3;
+                    break;
+                default:
+                    this.texture = this.throw1;
+            }
         }
     }
 
