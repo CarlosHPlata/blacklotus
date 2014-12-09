@@ -8,7 +8,7 @@ import com.mygdx.blacklotus.BlackLotusGame;
  */
 public class AbstractScreen implements Screen {
 
-    private BlackLotusGame main;
+    protected BlackLotusGame main;
 
     public AbstractScreen(BlackLotusGame main) {
         this.main = main;

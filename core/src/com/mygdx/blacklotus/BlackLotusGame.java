@@ -8,13 +8,23 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.blacklotus.screens.AbstractScreen;
 import com.mygdx.blacklotus.screens.GameScreen;
+import com.mygdx.blacklotus.screens.MenuScreen;
 
 public class BlackLotusGame extends Game {
-    public AbstractScreen GAMESCREEN;
+    public SpriteBatch batch;
+    public AbstractScreen MENUSCREEN;
+
 	
 	@Override
 	public void create () {
-        GAMESCREEN = new GameScreen(this);
-        setScreen(GAMESCREEN);
+        batch = new SpriteBatch();
+        MENUSCREEN = new MenuScreen(this);
+        setScreen(MENUSCREEN);
 	}
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        MENUSCREEN.dispose();
+    }
 }

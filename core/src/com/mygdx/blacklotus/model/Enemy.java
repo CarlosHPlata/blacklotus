@@ -24,7 +24,7 @@ public class Enemy {
         this.initX = initX;
         this.initY = initY;
 
-        this.texture = new Texture(Gdx.files.internal("ninja1.jpg"));
+        this.texture = new Texture(Gdx.files.internal("ninja1.png"));
         this.bordes = new Rectangle(initX, initY, texture.getWidth(), texture.getHeight());
 
         verticex = Gdx.graphics.getWidth()/2 + ((new Random()).nextFloat() * (Gdx.graphics.getWidth()/3));
@@ -36,9 +36,17 @@ public class Enemy {
     }
 
     public void update(float delta){
+
+        if (isOverY()){
+            this.verticex = this.bordes.x;
+            this.verticey = 0;
+            this.initX = 80;
+            this.initY = Gdx.graphics.getHeight()/2;
+        }
+
         float a = (this.initY - this.verticey) / ((this.initX - this.verticex) * (this.initX - this.verticex)); //calculo del foco de la parabola
 
-        float nextX = bordes.x - MOV_SPEED*delta;
+        float nextX = this.verticey==0? bordes.x - MOV_SPEED*delta*3 : bordes.x - MOV_SPEED*delta;
         float nextY = a * ((nextX - this.verticex) * (nextX - this.verticex)) + this.verticey; //formula calculo de la parabola
 
         this.bordes.x = nextX;
@@ -69,5 +77,13 @@ public class Enemy {
         else
             return false;
 
+    }
+
+    public boolean isOverY() {
+        if (bordes.y < 0){
+            return  true;
+        } else {
+            return false;
+        }
     }
 }
