@@ -47,4 +47,8 @@ public class Shuriken {
         else
             return false;
     }
+
+    public Rectangle getBordes(){
+        return this.bordes;
+    }
 }
