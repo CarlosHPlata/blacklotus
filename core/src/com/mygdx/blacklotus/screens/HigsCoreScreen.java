@@ -1,77 +1,61 @@
 package com.mygdx.blacklotus.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.blacklotus.BlackLotusGame;
 
 /**
- * Created by Usuario on 09/12/2014.
+ * Created by Usuario on 10/12/2014.
  */
-public class MenuScreen extends AbstractScreen {
+public class HigsCoreScreen extends AbstractScreen{
 
     private Skin skin;
     private Table table;
     private SpriteBatch batch;
     private Stage stage;
-    private Music music;
     private Texture fondo;
+    private Preferences puntuaciones;
+    private Music music;
+    private int maxscore;
 
-    public MenuScreen(BlackLotusGame main) {
+    public HigsCoreScreen(BlackLotusGame main, Music music) {
         super(main);
         this.skin = new Skin(Gdx.files.internal("uiskin.json"));
         this.stage = new Stage();
-
         this.table = new Table();
+        this.music = music;
     }
 
     @Override
     public void show() {
         batch = main.batch;
-        music = Gdx.audio.newMusic(Gdx.files.internal("Ninjas_music.mp3"));
-        music.setLooping(true);
+        puntuaciones = Gdx.app.getPreferences("-scores");
+        maxscore = puntuaciones.getInteger("maxScore");
         fondo = new Texture(Gdx.files.internal("fondoMenu.jpg"));
 
-        if (main.isSoundEnabled)
-            music.play();
 
-        final TextButton play = new TextButton("Play", this.skin);
-        play.addListener(new ChangeListener() {
+        Label label = new Label("HIGH SCORE", skin);
+        Label highscore = new Label(Integer.toString(maxscore),skin);
+
+        TextButton exit = new TextButton("Back", this.skin);
+        exit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 final BlackLotusGame game = main;
-                game.setScreen(new GameScreen(main));
+                game.setScreen(new MenuScreen(main));
                 music.stop();
-                stage.dispose();
-            }
-        });
-
-        TextButton options = new TextButton("Options", this.skin);
-        options.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                final BlackLotusGame game = main;
-                game.setScreen(new OptionScreen(main, music));
-                stage.dispose();
-            }
-        });
-
-        TextButton board = new TextButton("HigScore", this.skin);
-        board.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                final BlackLotusGame game = main;
-                game.setScreen(new HigsCoreScreen(main, music));
                 stage.dispose();
             }
         });
@@ -80,16 +64,14 @@ public class MenuScreen extends AbstractScreen {
         table.setFillParent(true);
 
         table.row().padTop(Gdx.graphics.getHeight()/4);
-        table.add(play).prefWidth(300);
+        table.add(label);
+        table.row();
+        table.add(highscore);
 
-        table.row().padTop(10);
-        table.add(board).prefWidth(300);
-
-        table.row().padTop(10);
-        table.add(options).prefWidth(300);
+        table.row().padTop(30);
+        table.add(exit).prefWidth(300);
 
         stage.addActor(table);
-
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -111,6 +93,6 @@ public class MenuScreen extends AbstractScreen {
     @Override
     public void dispose() {
         stage.dispose();
-        batch.dispose();
     }
+
 }
