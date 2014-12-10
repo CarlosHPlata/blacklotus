@@ -10,6 +10,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.blacklotus.BlackLotusGame;
 import com.mygdx.blacklotus.model.Enemy;
 import com.mygdx.blacklotus.model.Ninja;
@@ -30,13 +39,18 @@ public class GameScreen extends AbstractScreen {
     private Preferences puntuaciones;
     private float durationGame;
     private TextureAtlas atlas;
+    private Skin skin;
+    private Stage stagePause;
+    private Stage buttonPause;
 
     private Sound loseSound;
     private Music ambientMusic;
 
     public static final float COOLDOWN_ENEMIES = 5;
+    public static final int RUNNING = 1, PAUSE = 2, GAME_OVER = 3;
     private float difficult;
     private float cooldown_enemies;
+    private int state;
 
     //elementos del juego
     private Ninja blackLotus;
@@ -52,6 +66,7 @@ public class GameScreen extends AbstractScreen {
 
     public GameScreen (BlackLotusGame main) {
         super (main);
+        state = RUNNING;
         shurikens = new ArrayList<Shuriken>();
         enemies = new ArrayList<Enemy>();
         cooldown_enemies = 0;
@@ -60,6 +75,9 @@ public class GameScreen extends AbstractScreen {
         durationGame =0;
         difficult = 1;
         atlas = new TextureAtlas("ninja.atlas");
+        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+        this.stagePause = new Stage();
+        this.buttonPause = new Stage();
     }
 
     @Override
@@ -86,6 +104,8 @@ public class GameScreen extends AbstractScreen {
 
         puntuaciones =Gdx.app.getPreferences("-scores");
         maxScore = puntuaciones.getInteger("maxScore");
+
+        loadMenuScreen();
     }
 
     @Override
@@ -93,10 +113,18 @@ public class GameScreen extends AbstractScreen {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (lifes > 0){
-            updateGaming(deltaTime);
-        } else {
-            updateLose();
+        if (lifes == 0) this.state = GAME_OVER;
+
+        switch (this.state){
+            case RUNNING:
+                updateGaming(deltaTime);
+                break;
+            case PAUSE:
+
+                break;
+            case GAME_OVER:
+                updateLose();
+                break;
         }
 
         durationGame+=deltaTime;
@@ -105,7 +133,7 @@ public class GameScreen extends AbstractScreen {
             //dibujando elementos comunes
             batch.draw(fondo, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             font.draw(batch, "Score: "+Integer.toString(this.score), Gdx.graphics.getWidth()/5, 40);
-            font.draw(batch, "Level: "+Float.toString(this.difficult),Gdx.graphics.getWidth()/2+100,40);
+            font.draw(batch, "Level: "+Integer.toString((int)this.difficult),Gdx.graphics.getWidth()/2+100,40);
             font.draw(batch, "MaxScore: "+Integer.toString(this.maxScore), Gdx.graphics.getWidth()/2+100, Gdx.graphics.getHeight()-5);
 
             for (int i=0; i<this.lifes; i++){
@@ -138,6 +166,14 @@ public class GameScreen extends AbstractScreen {
             if (lifes==0)
                 font.draw(batch,"YOU LOSE", Gdx.graphics.getWidth()/2 - 100, Gdx.graphics.getHeight()/2+100);
         batch.end();
+
+        buttonPause.act(deltaTime);
+        buttonPause.draw();
+
+        if (state == PAUSE){
+            stagePause.act(deltaTime);
+            stagePause.draw();
+        }
     }
 
     @Override
@@ -237,7 +273,6 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isTouched()) {
             puntuaciones.putInteger("maxScore", maxScore);
             puntuaciones.flush();
-            batch.dispose();
             font.dispose();
             textureBlackLotus.dispose();
             ambientMusic.stop();
@@ -266,6 +301,85 @@ public class GameScreen extends AbstractScreen {
         if (score > 100){
             difficult = 5 + (score/20);
         }
+    }
+
+
+    public void loadMenuScreen(){
+        Table table = new Table();
+
+        final CheckBox soundCheckbox = new CheckBox("  Sounds ", skin);
+        soundCheckbox.setChecked(main.isSoundEnabled);
+        soundCheckbox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                final BlackLotusGame game = main;
+                game.isSoundEnabled = !game.isSoundEnabled;
+                if (game.isSoundEnabled)
+                    ambientMusic.play();
+                else
+                    ambientMusic.stop();
+            }
+        });
+
+        final TextButton resume = new TextButton("Resume", this.skin);
+        resume.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                state = RUNNING;
+                Gdx.input.setInputProcessor(buttonPause);
+            }
+        });
+
+        final TextButton backMenu = new TextButton("Back to menu", this.skin);
+        backMenu.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                  BlackLotusGame game = main;
+                  puntuaciones.putInteger("maxScore", maxScore);
+                  puntuaciones.flush();
+
+                  main.setScreen(new MenuScreen(main));
+
+                  fondo.dispose();
+                  font.dispose();
+                  stagePause.dispose();
+                  buttonPause.dispose();
+                  loseSound.stop();
+                  ambientMusic.stop();
+            }
+        });
+
+        Texture pauseImg = new Texture(Gdx.files.internal("pauseBut.png"));
+        TextureRegion pauseImgR = new TextureRegion(pauseImg);
+
+        final ImageButton pause = new ImageButton(new TextureRegionDrawable(pauseImgR));
+        pause.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                state = PAUSE;
+                Gdx.input.setInputProcessor(stagePause);
+            }
+        });
+
+        table.setFillParent(true);
+
+        table.add(soundCheckbox).prefWidth(300);
+
+        table.row().padTop(10);
+        table.add(resume).prefWidth(300);
+
+        table.row().padTop(30);
+        table.add(backMenu).prefWidth(300);
+
+        stagePause.addActor(table);
+
+        //boton de pausa
+        Table table2 = new Table();
+        table2.setPosition(pauseImg.getWidth(), Gdx.graphics.getHeight()-pauseImg.getHeight());
+
+        table2.add(pause);
+        buttonPause.addActor(table2);
+        Gdx.input.setInputProcessor(buttonPause);
     }
 
 }

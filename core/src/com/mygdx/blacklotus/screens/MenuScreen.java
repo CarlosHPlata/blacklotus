@@ -66,8 +66,7 @@ public class MenuScreen extends AbstractScreen {
             }
         });
 
-        TextButton exit = new TextButton("Exit", this.skin);
-        TextButton board = new TextButton("LaderBoards", this.skin);
+        TextButton board = new TextButton("HigScore", this.skin);
 
         super.show();
         table.setFillParent(true);
@@ -81,8 +80,6 @@ public class MenuScreen extends AbstractScreen {
         table.row().padTop(10);
         table.add(options).prefWidth(300);
 
-        table.row().padTop(30);
-        table.add(exit).prefWidth(300);
         stage.addActor(table);
 
         Gdx.input.setInputProcessor(stage);
@@ -106,5 +103,6 @@ public class MenuScreen extends AbstractScreen {
     @Override
     public void dispose() {
         stage.dispose();
+        batch.dispose();
     }
 }
