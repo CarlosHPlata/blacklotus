@@ -13,11 +13,12 @@ import com.mygdx.blacklotus.screens.MenuScreen;
 public class BlackLotusGame extends Game {
     public SpriteBatch batch;
     public AbstractScreen MENUSCREEN;
-
+    public boolean isSoundEnabled;
 	
 	@Override
 	public void create () {
         batch = new SpriteBatch();
+        isSoundEnabled = true;
         MENUSCREEN = new MenuScreen(this);
         setScreen(MENUSCREEN);
 	}

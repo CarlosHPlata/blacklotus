@@ -75,13 +75,14 @@ public class GameScreen extends AbstractScreen {
 
         //reproduciendo musica
         ambientMusic.setLooping(true);
-        ambientMusic.play();
+        if (main.isSoundEnabled)
+            ambientMusic.play();
 
         //texturas de personajes
         textureBlackLotus = new Texture(Gdx.files.internal("padle.jpg"));
 
         //dibujando elementos del juego
-        blackLotus = new Ninja(80, Gdx.graphics.getHeight()/2-textureBlackLotus.getHeight()/2, this.atlas);
+        blackLotus = new Ninja(80, Gdx.graphics.getHeight()/2, this.atlas);
 
         puntuaciones =Gdx.app.getPreferences("-scores");
         maxScore = puntuaciones.getInteger("maxScore");
@@ -153,7 +154,7 @@ public class GameScreen extends AbstractScreen {
 
     public void updateGaming(float deltaTime) {
         //update del personaje principal
-        blackLotus.update(deltaTime, this.shurikens, this.difficult);
+        blackLotus.update(deltaTime, this.shurikens, this.difficult, main.isSoundEnabled);
 
         //controla el cooldown de salida de los enemigos
         enemieCooldownController(deltaTime);
@@ -228,7 +229,8 @@ public class GameScreen extends AbstractScreen {
     private boolean loseSoundPlayed = false;
     public void updateLose(){
         if (!loseSoundPlayed) {
-            loseSound.play();
+            if (main.isSoundEnabled)
+                loseSound.play();
             loseSoundPlayed = true;
         }
 

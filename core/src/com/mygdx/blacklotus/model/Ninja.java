@@ -20,6 +20,9 @@ public class Ninja{
     private float x;
     private float y;
 
+    private float coordX=-2;
+    private float coordY=-4;
+
     private float coldDown = 0;
 
     private TextureRegion texture;
@@ -51,7 +54,7 @@ public class Ninja{
         batch.draw(texture, bordes.x, bordes.y, texture.getRegionWidth(), texture.getRegionHeight());
     }
 
-    public void update(float delta, List<Shuriken> shurikens, float difficult){
+    public void update(float delta, List<Shuriken> shurikens, float difficult, boolean sound){
 
         if ( coldDown > 0) {
             coldDown = difficult<5? coldDown - delta : coldDown - (delta*2);
@@ -60,29 +63,36 @@ public class Ninja{
         }
 
         if (Gdx.input.isTouched() && coldDown <= 0){
-            float coordX = Gdx.input.getX();
-            float coordY = Gdx.graphics.getHeight() - Gdx.input.getY();
+            float newcoordX = Gdx.input.getX();
+            float newcoordY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-            Shuriken shuriken = new Shuriken(bordes.getX()+texture.getRegionWidth()/2, bordes.getY(), coordX, coordY, atlas);
-            shurikens.add(shuriken);
+            if (newcoordX != coordX && newcoordY != coordY){
+                coordX = newcoordX;
+                coordY = newcoordY;
+                Shuriken shuriken = new Shuriken(bordes.getX()+texture.getRegionWidth()/2, bordes.getY(), coordX, coordY, atlas);
+                shurikens.add(shuriken);
 
-            coldDown = COLD_DOWN;
-            switch ((new Random()).nextInt(3)){
-                case 0:
-                    this.texture = this.throw1;
-                    hit1.play(0.3f);
-                    break;
-                case 1:
-                    this.texture = this.throw2;
-                    hit2.play(0.3f);
-                    break;
-                case 2:
-                    this.texture = this.throw3;
-                    hit3.play(0.3f);
-                    break;
-                default:
-                    this.texture = this.throw1;
-                    hit2.play(0.3f);
+                coldDown = COLD_DOWN;
+                switch ((new Random()).nextInt(3)){
+                    case 0:
+                        this.texture = this.throw1;
+                        if (sound)
+                            hit1.play(0.3f);
+                        break;
+                    case 1:
+                        this.texture = this.throw2;
+                        if (sound)
+                            hit2.play(0.3f);
+                        break;
+                    case 2:
+                        this.texture = this.throw3;
+                        if (sound)
+                            hit3.play(0.3f);
+                        break;
+                    default:
+                        this.texture = this.throw1;
+                        hit2.play(0.3f);
+                }
             }
         }
     }

@@ -3,9 +3,11 @@ package com.mygdx.blacklotus.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -22,48 +24,51 @@ public class OptionScreen extends AbstractScreen {
     private SpriteBatch batch;
     private Stage stage;
     private Music music;
+    private Texture fondo;
 
-    public OptionScreen(BlackLotusGame main) {
+    public OptionScreen(BlackLotusGame main, Music music) {
         super(main);
         this.skin = new Skin(Gdx.files.internal("uiskin.json"));
         this.stage = new Stage();
-
+        this.music = music;
         this.table = new Table();
     }
 
     @Override
     public void show() {
         batch = main.batch;
-        music = Gdx.audio.newMusic(Gdx.files.internal("Ninjas_music.mp3"));
+        fondo = new Texture(Gdx.files.internal("fondoMenu.jpg"));
 
-        music.play();
-
-        final TextButton play = new TextButton("Play", this.skin);
-        play.addListener(new ChangeListener() {
+        final CheckBox soundCheckbox = new CheckBox("  Sounds ", skin);
+        soundCheckbox.setChecked(main.isSoundEnabled);
+        soundCheckbox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 final BlackLotusGame game = main;
-                game.setScreen(new GameScreen(main));
+                game.isSoundEnabled = !game.isSoundEnabled;
+                if (game.isSoundEnabled)
+                    music.play();
+                else
+                    music.stop();
+            }
+        });
+
+        TextButton exit = new TextButton("Back", this.skin);
+        exit.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                final BlackLotusGame game = main;
+                game.setScreen(new MenuScreen(main));
                 music.stop();
-                music.dispose();
                 stage.dispose();
             }
         });
 
-        TextButton options = new TextButton("Options", this.skin);
-        TextButton exit = new TextButton("Exit", this.skin);
-        TextButton board = new TextButton("LaderBoards", this.skin);
-
         super.show();
         table.setFillParent(true);
 
-        table.add(play).prefWidth(300);
-
-        table.row().padTop(10);
-        table.add(board).prefWidth(300);
-
-        table.row().padTop(10);
-        table.add(options).prefWidth(300);
+        table.row().padTop(Gdx.graphics.getHeight()/4);
+        table.add(soundCheckbox).prefWidth(300);
 
         table.row().padTop(30);
         table.add(exit).prefWidth(300);
@@ -77,6 +82,10 @@ public class OptionScreen extends AbstractScreen {
         super.render(delta);
         Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        batch.draw(fondo, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.end();
 
         stage.act(delta);
         stage.draw();
