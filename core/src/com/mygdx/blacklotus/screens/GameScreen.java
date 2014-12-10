@@ -3,6 +3,7 @@ package com.mygdx.blacklotus.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -30,6 +31,7 @@ public class GameScreen extends AbstractScreen {
     private float durationGame;
     private TextureAtlas atlas;
 
+    private Sound loseSound;
     private Music ambientMusic;
 
     public static final float COOLDOWN_ENEMIES = 5;
@@ -54,7 +56,7 @@ public class GameScreen extends AbstractScreen {
         enemies = new ArrayList<Enemy>();
         cooldown_enemies = 0;
         score = 0;
-        lifes = 10;
+        lifes = 5;
         durationGame =0;
         difficult = 1;
         atlas = new TextureAtlas("ninja.atlas");
@@ -68,6 +70,7 @@ public class GameScreen extends AbstractScreen {
         lifeVoidTexture = atlas.findRegion("heartVoid");
         font = new BitmapFont(Gdx.files.internal("ninjaFont.fnt"), Gdx.files.internal("ninjaFont.png"), false);
         ambientMusic = Gdx.audio.newMusic(Gdx.files.internal("Ninjas_Music_No_Vocals.mp3"));
+        loseSound = Gdx.audio.newSound(Gdx.files.internal("YouLose.mp3"));
         fondo = new Texture(Gdx.files.internal("fondo.jpg"));
 
         //reproduciendo musica
@@ -100,14 +103,16 @@ public class GameScreen extends AbstractScreen {
         batch.begin();
             //dibujando elementos comunes
             batch.draw(fondo, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            font.draw(batch, "Score: "+Integer.toString(this.score), Gdx.graphics.getWidth()/4, 40);
+            font.draw(batch, "Score: "+Integer.toString(this.score), Gdx.graphics.getWidth()/5, 40);
+            font.draw(batch, "Level: "+Float.toString(this.difficult),Gdx.graphics.getWidth()/2+100,40);
+            font.draw(batch, "MaxScore: "+Integer.toString(this.maxScore), Gdx.graphics.getWidth()/2+100, Gdx.graphics.getHeight()-5);
 
             for (int i=0; i<this.lifes; i++){
                 batch.draw(lifeTexture, Gdx.graphics.getWidth()/4 + lifeTexture.getRegionWidth()*i,
                         Gdx.graphics.getHeight()-lifeTexture.getRegionWidth()-5, lifeTexture.getRegionWidth(),
                         lifeTexture.getRegionHeight());
             }
-            for (int i=this.lifes; i<10; i++){
+            for (int i=this.lifes; i<5; i++){
                 batch.draw(lifeVoidTexture, Gdx.graphics.getWidth()/4 + lifeTexture.getRegionWidth()*i,
                         Gdx.graphics.getHeight()-lifeTexture.getRegionWidth()-5, lifeTexture.getRegionWidth(),
                         lifeTexture.getRegionHeight());
@@ -129,8 +134,8 @@ public class GameScreen extends AbstractScreen {
             }
 
             //dibujando si perdiste
-            if (lifes<0)
-                font.draw(batch,"YOU LOSE", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+            if (lifes==0)
+                font.draw(batch,"YOU LOSE", Gdx.graphics.getWidth()/2 - 100, Gdx.graphics.getHeight()/2+100);
         batch.end();
     }
 
@@ -220,10 +225,22 @@ public class GameScreen extends AbstractScreen {
 
     }
 
+    private boolean loseSoundPlayed = false;
     public void updateLose(){
+        if (!loseSoundPlayed) {
+            loseSound.play();
+            loseSoundPlayed = true;
+        }
+
         if (Gdx.input.isTouched()) {
-            main.setScreen( new MenuScreen(main));
-            this.dispose();
+            puntuaciones.putInteger("maxScore", maxScore);
+            puntuaciones.flush();
+            batch.dispose();
+            font.dispose();
+            textureBlackLotus.dispose();
+            ambientMusic.stop();
+            ambientMusic.dispose();
+            main.setScreen(new MenuScreen(main));
         }
     }
 

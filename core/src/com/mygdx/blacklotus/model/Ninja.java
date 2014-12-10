@@ -1,6 +1,7 @@
 package com.mygdx.blacklotus.model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -25,10 +26,15 @@ public class Ninja{
     private TextureRegion ninjaNormal, throw1, throw2, throw3;
     private TextureAtlas atlas;
     private Rectangle bordes;
+    private Sound hit1, hit2, hit3;
 
     public Ninja (float x, float y, TextureAtlas atlas) {
         this.x = x;
         this.y = y;
+
+        hit1 = Gdx.audio.newSound(Gdx.files.internal("hit1.mp3"));
+        hit2 = Gdx.audio.newSound(Gdx.files.internal("hit2.mp3"));
+        hit3 = Gdx.audio.newSound(Gdx.files.internal("hit3.mp3"));
 
         this.atlas = atlas;
 
@@ -57,22 +63,26 @@ public class Ninja{
             float coordX = Gdx.input.getX();
             float coordY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-            Shuriken shuriken = new Shuriken(bordes.getX(), bordes.getY(), coordX, coordY, atlas);
+            Shuriken shuriken = new Shuriken(bordes.getX()+texture.getRegionWidth()/2, bordes.getY(), coordX, coordY, atlas);
             shurikens.add(shuriken);
 
             coldDown = COLD_DOWN;
             switch ((new Random()).nextInt(3)){
                 case 0:
                     this.texture = this.throw1;
+                    hit1.play(0.3f);
                     break;
                 case 1:
                     this.texture = this.throw2;
+                    hit2.play(0.3f);
                     break;
                 case 2:
                     this.texture = this.throw3;
+                    hit3.play(0.3f);
                     break;
                 default:
                     this.texture = this.throw1;
+                    hit2.play(0.3f);
             }
         }
     }

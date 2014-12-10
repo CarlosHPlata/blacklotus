@@ -15,7 +15,7 @@ import com.mygdx.blacklotus.BlackLotusGame;
 /**
  * Created by Usuario on 09/12/2014.
  */
-public class MenuScreen extends AbstractScreen {
+public class OptionScreen extends AbstractScreen {
 
     private Skin skin;
     private Table table;
@@ -23,7 +23,7 @@ public class MenuScreen extends AbstractScreen {
     private Stage stage;
     private Music music;
 
-    public MenuScreen(BlackLotusGame main) {
+    public OptionScreen(BlackLotusGame main) {
         super(main);
         this.skin = new Skin(Gdx.files.internal("uiskin.json"));
         this.stage = new Stage();
@@ -88,3 +88,4 @@ public class MenuScreen extends AbstractScreen {
         stage.dispose();
     }
 }
+
