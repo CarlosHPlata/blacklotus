@@ -1,6 +1,7 @@
 package com.mygdx.blacklotus.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -20,6 +21,7 @@ public class MenuScreen extends AbstractScreen {
     private Table table;
     private SpriteBatch batch;
     private Stage stage;
+    private Music music;
 
     public MenuScreen(BlackLotusGame main) {
         super(main);
@@ -32,11 +34,17 @@ public class MenuScreen extends AbstractScreen {
     @Override
     public void show() {
         batch = main.batch;
+        music = Gdx.audio.newMusic(Gdx.files.internal("Ninjas_music.mp3"));
+
+        music.play();
+
         final TextButton play = new TextButton("Play", this.skin);
         play.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 final BlackLotusGame game = main;
+                music.stop();
+                music.dispose();
                 stage.dispose();
                 game.setScreen(new GameScreen(main));
             }

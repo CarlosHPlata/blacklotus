@@ -3,31 +3,59 @@ ninja.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+enemieAnimation
+  rotate: false
+  xy: 1, 21
+  size: 465, 93
+  orig: 465, 93
+  offset: 0, 0
+  index: -1
 ninja-throw-1
   rotate: false
-  xy: 1, 15
+  xy: 468, 36
   size: 62, 78
   orig: 62, 78
   offset: 0, 0
   index: -1
 ninja-throw-2
   rotate: false
-  xy: 65, 15
+  xy: 532, 36
   size: 56, 78
   orig: 56, 78
   offset: 0, 0
   index: -1
 ninja-throw-3
   rotate: false
-  xy: 123, 1
+  xy: 590, 22
   size: 36, 92
   orig: 36, 92
   offset: 0, 0
   index: -1
 ninja
   rotate: false
-  xy: 161, 1
+  xy: 628, 22
   size: 32, 92
   orig: 32, 92
+  offset: 0, 0
+  index: -1
+ShurikenSpriteSheet
+  rotate: false
+  xy: 1, 1
+  size: 56, 18
+  orig: 56, 18
+  offset: 0, 0
+  index: -1
+hearth
+  rotate: false
+  xy: 662, 79
+  size: 38, 35
+  orig: 38, 35
+  offset: 0, 0
+  index: -1
+heartVoid
+  rotate: false
+  xy: 662, 42
+  size: 38, 35
+  orig: 38, 35
   offset: 0, 0
   index: -1

@@ -23,13 +23,14 @@ public class Ninja{
 
     private TextureRegion texture;
     private TextureRegion ninjaNormal, throw1, throw2, throw3;
+    private TextureAtlas atlas;
     private Rectangle bordes;
 
-    public Ninja (float x, float y) {
+    public Ninja (float x, float y, TextureAtlas atlas) {
         this.x = x;
         this.y = y;
 
-        TextureAtlas atlas = new TextureAtlas("ninja.atlas");
+        this.atlas = atlas;
 
         this.ninjaNormal = atlas.findRegion("ninja");
         this.throw1 = atlas.findRegion("ninja-throw-1");
@@ -44,10 +45,10 @@ public class Ninja{
         batch.draw(texture, bordes.x, bordes.y, texture.getRegionWidth(), texture.getRegionHeight());
     }
 
-    public void update(float delta, List<Shuriken> shurikens){
+    public void update(float delta, List<Shuriken> shurikens, float difficult){
 
         if ( coldDown > 0) {
-            coldDown = coldDown - delta;
+            coldDown = difficult<5? coldDown - delta : coldDown - (delta*2);
         } else {
             this.texture = ninjaNormal;
         }
@@ -56,7 +57,7 @@ public class Ninja{
             float coordX = Gdx.input.getX();
             float coordY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-            Shuriken shuriken = new Shuriken(bordes.getX(), bordes.getY(), coordX, coordY);
+            Shuriken shuriken = new Shuriken(bordes.getX(), bordes.getY(), coordX, coordY, atlas);
             shurikens.add(shuriken);
 
             coldDown = COLD_DOWN;
